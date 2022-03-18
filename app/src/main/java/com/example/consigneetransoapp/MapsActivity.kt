@@ -1,22 +1,17 @@
 package com.example.consigneetransoapp
 
-import android.Manifest.permission.CAMERA
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.app.Dialog
-import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.example.consigneetransoapp.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.consigneetransoapp.databinding.ActivityMapsBinding
+
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -26,6 +21,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val intent = intent
+        val action = intent.action
+        val data: Uri? = intent.data
+        Log.d("Intent",data.toString())
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -35,6 +34,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         binding.remarks.setOnClickListener {
+            val a = data.toString()
+            val result = a.substringAfter("vendorLrNumber=").substringBefore(' ')
             RemarksCustomDialog().show(supportFragmentManager, "Remarks")
         }
         binding.uploadInMap.setOnClickListener {
