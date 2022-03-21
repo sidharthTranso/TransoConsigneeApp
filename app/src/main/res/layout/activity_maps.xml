@@ -18,10 +18,25 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:id="@+id/MainDisplay"
+        android:visibility="visible"
         android:layout_height="match_parent"
         android:layout_marginTop="230dp"
         android:background="@color/white"
         tools:context=".view.MapFragment">
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/progressBar"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/showError"
+            android:visibility="gone"
+            android:gravity="center"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintTop_toTopOf="parent" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -29,6 +44,8 @@
 
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:visibility="invisible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             map:cardCornerRadius="32dp"
@@ -124,10 +141,13 @@
 
                 </LinearLayout>
 
+
+
                 <LinearLayout
-                    android:id="@+id/ll4"
+                    android:id="@+id/ll5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
                     android:layout_below="@+id/ll3"
                     android:layout_marginTop="4dp"
                     android:orientation="horizontal"
@@ -137,43 +157,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Gurgaon"
-
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Bangalore"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:layout_below="@+id/ll4"
-                    android:layout_marginTop="4dp"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="B-123, Lorem ipsum dolor sit amet, consectetur add"
-
+                        android:id="@+id/sourceAddress"
 
                         android:textSize="18sp"
                         android:textStyle="normal" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="0dp"
+                        android:id="@+id/destinationAddress"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="B-123, Lorem ipsum dolor sit amet, consectetur add"

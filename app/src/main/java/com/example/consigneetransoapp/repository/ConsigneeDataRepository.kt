@@ -10,20 +10,23 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class ConsigneeDataRepository {
-    fun getConsigneeData(consigneeDataRequest: ConsigneeDataRequest, onResult:(ConsigneeDataResponse?) -> Unit) {
-        val retrofit = ServiceBuilder.buildService((ConsigneeApi::class.java))
-        retrofit.getConsigneeData(consigneeDataRequest).enqueue(
-            object : Callback<ConsigneeDataResponse> {
-                override fun onFailure(call: Call<ConsigneeDataResponse>, t: Throwable) {
-                    onResult(null)
-                }
+        fun getConsigneeData(vendor_lr_number: String, onResult:(ConsigneeDataResponse?) -> Unit) {
+        val retrofit = ServiceBuilder.buildService(ConsigneeApi::class.java)
+        retrofit.getConsigneeData(vendor_lr_number).enqueue(
+            object : Callback<ConsigneeDataResponse>{
                 override fun onResponse(
                     call: Call<ConsigneeDataResponse>,
                     response: Response<ConsigneeDataResponse>
                 ) {
                     val addedUser = response.body()
+
                     onResult(addedUser)
                 }
+
+                override fun onFailure(call: Call<ConsigneeDataResponse>, t: Throwable) {
+                    onResult(null)
+                }
+
             }
         )
     }

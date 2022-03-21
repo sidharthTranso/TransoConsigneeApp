@@ -1,22 +1,30 @@
 package com.example.consigneetransoapp
 
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.example.consigneetransoapp.databinding.ActivityMapsBinding
+import com.example.consigneetransoapp.model.ConsigneeDataRequest
+import com.example.consigneetransoapp.model.ConsigneeDataResponse
+import com.example.consigneetransoapp.repository.ConsigneeDataRepository
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    //private val model: MapActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +35,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.d("Intent",data.toString())
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.progressBar.isVisible = true
+        if (data!=null){
+            callApi(data)
+
+        }else{
+            binding.showError.isVisible = true
+            binding.progressBar.isVisible = false
+            binding.showError.text = "Please click on a valid link"
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -34,9 +51,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         binding.remarks.setOnClickListener {
-            val a = data.toString()
-            val result = a.substringAfter("vendorLrNumber=").substringBefore(' ')
-            RemarksCustomDialog().show(supportFragmentManager, "Remarks")
+
+
+             RemarksCustomDialog().show(supportFragmentManager, "Remarks")
         }
         binding.uploadInMap.setOnClickListener {
 //            val openDialog = Dialog(this)
@@ -48,6 +65,52 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             SignatureDialog().show(supportFragmentManager, "Signature")
         }
 
+    }
+
+    private fun callApi(data: Uri?) {
+        val a = data.toString()
+        val result = a.substringAfter("vendorLrNumber=").substringBefore(' ')
+
+        val apiService = ConsigneeDataRepository()
+        val userInfo = ConsigneeDataRequest(
+            userUserName = result,
+        )
+        apiService.getConsigneeData(result){
+            if (it?.success == true){
+                Log.d("Api Hit Success","True")
+                setAllData(it)
+            }
+        }
+
+        //    sendGet()
+
+
+    }
+
+    private fun setAllData(consigneeDataResponse: ConsigneeDataResponse) {
+        binding.progressBar.isVisible = false
+        binding.cardView.isVisible = true
+        binding.sourceAddress.text= consigneeDataResponse.data!!.source_address
+        binding.destinationAddress.text= consigneeDataResponse.data.destination_address
+
+    }
+
+    fun sendGet() {
+        val url = URL("https://neintranso.nittsu.co.in:6044/trip/ShipmentTrackingByVendorLr?vendorLrNumber=55114294")
+
+        with(url.openConnection() as HttpURLConnection) {
+            requestMethod = "GET"  // optional default is GET
+
+            println("\nSent 'GET' request to URL : $url; Response Code : $responseCode")
+
+            inputStream.bufferedReader().use {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    it.lines().forEach { line ->
+                        println(line)
+                    }
+                }
+            }
+        }
     }
 
     /**
