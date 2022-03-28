@@ -4,12 +4,11 @@
     package="com.example.consigneetransoapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ConsigneeTransoApp">
-
+        <activity
+            android:name=".view.ParentActivity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -45,15 +46,19 @@
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https"
+
+                <data
                     android:host="neintranso.nittsu.co.in"
                     android:pathPrefix=""
+                    android:scheme="https"
                     tools:ignore="AppLinkUrlError" />
-                <data android:scheme="app"
+                <data
                     android:host="neintranso.nittsu.co.in"
                     android:pathPrefix=""
+                    android:scheme="app"
                     tools:ignore="AppLinkUrlError" />
             </intent-filter>
         </activity>

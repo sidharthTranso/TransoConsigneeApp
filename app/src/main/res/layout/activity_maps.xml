@@ -181,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/ll5"
                     android:layout_marginTop="16dp"
-                    android:text="Material Details"
+                        android:text="Material Details"
 
                     android:textSize="22sp"
                     android:textStyle="bold" />

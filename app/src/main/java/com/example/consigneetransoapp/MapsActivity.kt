@@ -1,10 +1,15 @@
 package com.example.consigneetransoapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.consigneetransoapp.databinding.ActivityMapsBinding
 import com.example.consigneetransoapp.model.ConsigneeDataRequest
@@ -24,7 +29,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+
     //private val model: MapActivityViewModel by viewModels()
+    companion object {
+        private const val CAMERA_PERMISSION_CODE = 100
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,14 +41,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val intent = intent
         val action = intent.action
         val data: Uri? = intent.data
-        Log.d("Intent",data.toString())
+        Log.d("Intent", data.toString())
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.progressBar.isVisible = true
-        if (data!=null){
+        checkPermission(
+            Manifest.permission.CAMERA,
+            CAMERA_PERMISSION_CODE
+        )
+        if (data != null) {
             callApi(data)
 
-        }else{
+        } else {
             binding.showError.isVisible = true
             binding.progressBar.isVisible = false
             binding.showError.text = "Please click on a valid link"
@@ -53,7 +66,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.remarks.setOnClickListener {
 
 
-             RemarksCustomDialog().show(supportFragmentManager, "Remarks")
+            RemarksCustomDialog().show(supportFragmentManager, "Remarks")
         }
         binding.uploadInMap.setOnClickListener {
 //            val openDialog = Dialog(this)
@@ -75,9 +88,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val userInfo = ConsigneeDataRequest(
             userUserName = result,
         )
-        apiService.getConsigneeData(result){
-            if (it?.success == true){
-                Log.d("Api Hit Success","True")
+        apiService.getConsigneeData(result) {
+            if (it?.success == true) {
+                Log.d("Api Hit Success", "True")
                 setAllData(it)
             }
         }
@@ -90,13 +103,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setAllData(consigneeDataResponse: ConsigneeDataResponse) {
         binding.progressBar.isVisible = false
         binding.cardView.isVisible = true
-        binding.sourceAddress.text= consigneeDataResponse.data!!.source_address
-        binding.destinationAddress.text= consigneeDataResponse.data.destination_address
+        binding.sourceAddress.text = consigneeDataResponse.data!!.source_address
+        binding.destinationAddress.text = consigneeDataResponse.data.destination_address
 
     }
 
     fun sendGet() {
-        val url = URL("https://neintranso.nittsu.co.in:6044/trip/ShipmentTrackingByVendorLr?vendorLrNumber=55114294")
+        val url =
+            URL("https://neintranso.nittsu.co.in:6044/trip/ShipmentTrackingByVendorLr?vendorLrNumber=55114294")
 
         with(url.openConnection() as HttpURLConnection) {
             requestMethod = "GET"  // optional default is GET
@@ -128,10 +142,43 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(12.9784, 77.6408)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Transo"))
-       // mMap.animateCamera( CameraUpdateFactory.zoomTo( 17.0f ) )
+        // mMap.animateCamera( CameraUpdateFactory.zoomTo( 17.0f ) )
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14F))
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    }
+
+    // Function to check and request permission.
+    private fun checkPermission(permission: String, requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+        } else {
+           // Toast.makeText(this, "Permission already granted", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // This function is called when the user accepts or decline the permission.
+// Request Code is used to check which permission called this function.
+// This request code is provided when the user is prompt for permission.
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Camera Permission Granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
     }
 
 
