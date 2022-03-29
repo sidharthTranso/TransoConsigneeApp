@@ -44,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.d("Intent", data.toString())
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.progressBar.isVisible = true
+       // binding.progressBar.isVisible = true
         checkPermission(
             Manifest.permission.CAMERA,
             CAMERA_PERMISSION_CODE
@@ -53,9 +53,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             callApi(data)
 
         } else {
-            binding.showError.isVisible = true
-            binding.progressBar.isVisible = false
+            binding.showError.isVisible = false
+           // binding.progressBar.isVisible = true
             binding.showError.text = "Please click on a valid link"
+
+//            binding.showError.isVisible = true
+//            binding.progressBar.isVisible = false
+//            binding.showError.text = "Please click on a valid link"
         }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
